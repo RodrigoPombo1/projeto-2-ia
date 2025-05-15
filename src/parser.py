@@ -9,10 +9,17 @@ def feature_engineering(df):
     median_emp_length = df['person_emp_length'].replace(0, np.nan).median()
     df['person_emp_length'] = df['person_emp_length'].replace(0, median_emp_length)
 
-    df['financial_burden'] = df['loan_amnt'] * df['loan_int_rate']
+    df['financial_burden'] = df['loan_amnt'] * df['loan_int_rate'] / 100  
+
     df['income_per_year_emp'] = df['person_income'] / (df['person_emp_length'] + 1e-5)
     df['int_per_year_emp'] = df['loan_int_rate'] / (df['person_emp_length'] + 1e-5)
+
+    df['loan_to_credit_hist'] = df['loan_amnt'] / (df['cb_person_cred_hist_length'] + 1e-5)
+    df['loan_to_income_ratio'] = df['loan_amnt'] / (df['person_income'] + 1e-5)
+
+
     return df
+
 
 
 def preprocess_train(file_path: str, balance_classes: bool = False, use_smote: bool = False, use_feature_eng: bool = False):

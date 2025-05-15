@@ -41,19 +41,17 @@
 ## Feature engenering:
 - Criar novas variáveis que combinam informação relevante para ajudar o modelo a detetar padrões mais facilmente — especialmente padrões relacionados com capacidade financeira e risco.
 ### Variaveis usadas:
-- Trata valores 0 na coluna person_emp_length (anos de experiência):
-    -   Substitui os valores 0 por a mediana da coluna.
-    -   Isto evita divisões por zero em cálculos futuros.
+- Correção de valores 0 na coluna person_emp_length (anos de experiência profissional):
+    Os zeros são substituídos pela mediana da coluna para evitar valores inválidos que podem prejudicar os cálculos subsequentes, nomeadamente divisões por zero. Isto melhora a qualidade e a robustez dos novos atributos criado
 
-- Cria a feature financial_burden:
-    - Representa o custo total dos juros do empréstimo.
+- **financial_burden**:
+- Calcula uma estimativa do custo total dos juros do empréstimo, dado pelo produto do montante do empréstimo        (loan_amnt)    pela taxa de juro (loan_int_rate). Esta variável ajuda a captar o peso financeiro do empréstimo para o   indivíduo, que pode estar correlacionado com a probabilidade de incumprimento.
 
-    - Pode indicar se a pessoa está a assumir um empréstimo muito pesado.
-- Cria a feature income_per_year_emp:
-    - Calcula o rendimento médio por ano de trabalho.
-    - Pode mostrar a estabilidade ou progressão da carreira da pessoa.
-    - O + 1e-5 evita divisão por zero.
-- Cria a feature int_per_year_emp
+- **income_per_year_emp**:
+- Mede o rendimento médio anual do indivíduo, obtido ao dividir o rendimento anual (person_income) pelo tempo de experiência profissional (person_emp_length). Esta variável reflete a capacidade financeira ajustada pelo tempo no mercado de trabalho, podendo indicar estabilidade ou crescimento da carreira.
+
+- **int_per_year_emp**:
+- Calcula a taxa de juro anual ajustada pelo tempo de experiência, dividindo a taxa de juro do empréstimo pela experiência profissional. Esta métrica pode evidenciar se o custo do empréstimo é elevado relativamente à experiência financeira da pessoa, o que pode impactar no risco de incumprimento.
 
 
 ## Calculo do tempo é com o treino +teste
@@ -115,7 +113,7 @@ weighted avg       0.90      0.84      0.86     11729
 
 ## Uso de Feature engenering
 ```
-exatidão  (validação): 0.9143149458606872
+exatidão (validação): 0.9149970159433882
               precision    recall  f1-score   support
 
            0       0.93      0.97      0.95     10087
@@ -160,7 +158,7 @@ weighted avg       0.95      0.95      0.95     11729
 
 - Foi especialmente superior na classe minoritária, onde o modelo de regressão logística teve um desempenho mais fraco (recall 0.53 vs 0.72).
 
-- Não foi necessário balanceamento explícito (nem SMOTE, nem class_weight) para a Random Forest ter um bom desempenho — isso é esperado, porque Random Forest lida melhor com desbalanceamento ao não ser um modelo linear e ao fazer bootstraping com vários subconjuntos dos dados.
+- Não foi necessário Equilibrio explícito (nem SMOTE, nem class_weight) para a Random Forest ter um bom desempenho — isso é esperado, porque Random Forest lida melhor com desEquilibrio ao não ser um modelo linear e ao fazer bootstraping com vários subconjuntos dos dados.
 
 ## RandomForestClassifier com class_weight:
 
@@ -179,7 +177,7 @@ weighted avg       0.95      0.95      0.95     11729
 ```
 
 - ## Conclusao:
-- Random Forest com class_weight não tem qualquer melhoria mas ja era esperado   porque Random Forest lida melhor com desbalanceamento ao não ser um modelo linear e ao fazer bootstraping com vários subconjuntos dos dados.
+- Random Forest com class_weight não tem qualquer melhoria mas ja era esperado   porque Random Forest lida melhor com desEquilibrio ao não ser um modelo linear e ao fazer bootstraping com vários subconjuntos dos dados.
 
 ## RandomForestClassifier com Smote:
 - Este teste não é necessario pois como nao é influenciado pelo class_weight o smote nao tera efeito
@@ -187,7 +185,7 @@ weighted avg       0.95      0.95      0.95     11729
 ## RandomForestClassifier com Feature engineering:
 
 ```
-exatidão (validação): 0.9472248273510103
+exatidão (validação): 0.9473100861113479
               precision    recall  f1-score   support
 
            0       0.95      0.99      0.97     10087
@@ -196,5 +194,94 @@ exatidão (validação): 0.9472248273510103
     accuracy                           0.95     11729
    macro avg       0.92      0.85      0.88     11729
 weighted avg       0.95      0.95      0.94     11729
+
 ```
 - Estas features podema acrescentar alguma redundancia desbalancear a árvore ao fazer splits em features artificiais menos relevantes
+
+
+
+
+## XGBoost:
+## Treino:
+- XGBClassifier(
+        n_estimators=100,
+        learning_rate=0.1,
+        max_depth=6,
+        subsample=0.8,
+        colsample_bytree=0.8,
+        random_state=42,
+        eval_metric='logloss',
+    )
+- Resultados:
+```
+exatidão (validação): 0.9534487168556569
+              precision    recall  f1-score   support
+
+           0       0.96      0.99      0.97     10087
+           1       0.92      0.74      0.82      1642
+
+    accuracy                           0.95     11729
+   macro avg       0.94      0.86      0.89     11729
+weighted avg       0.95      0.95      0.95     11729
+
+```
+- Tempo de execução: 1.12 segundos- Conclusao:
+
+
+## Treino com balance_classes:
+
+- Resultados:
+```
+exatidão (validação): 0.9252280671839032
+              precision    recall  f1-score   support
+
+           0       0.97      0.94      0.96     10087
+           1       0.70      0.83      0.76      1642
+
+    accuracy                           0.93     11729
+   macro avg       0.83      0.89      0.86     11729
+weighted avg       0.93      0.93      0.93     11729
+```
+- Melhorou o recall porem pirou outras metricas talvez mais importantes como a precisao e o f1-score, levando um aumento do numero de falsos negativos
+- ISto aconteceu pois o modelo dá mais importância à classe minoritária (no teu caso, o loan_status = 1). 
+
+## Uso De smote:
+- Resultados:
+```
+eexatidão (validação): 0.9534487168556569
+              precision    recall  f1-score   support
+
+           0       0.96      0.99      0.97     10087
+           1       0.92      0.74      0.82      1642
+
+    accuracy                           0.95     11729
+   macro avg       0.94      0.86      0.89     11729
+weighted avg       0.95      0.95      0.95     11729
+```
+-  O uso de smote tem um resultado identico do balance_classes
+
+## Uso de Feature engenering
+```
+  bst.update(dtrain, iteration=i, fobj=obj)
+exatidão (validação): 0.9512319890868787
+              precision    recall  f1-score   support
+
+           0       0.96      0.99      0.97     10087
+           1       0.91      0.73      0.81      1642
+
+    accuracy                           0.95     11729
+   macro avg       0.93      0.86      0.89     11729
+weighted avg       0.95      0.95      0.95     11729
+```
+
+
+## Interpretação
+- O modelo base é forte para a classe majoritária, mas perde alguns positivos.
+
+- Equilibrio melhora o recall da classe minoritária, mas prejudica precisão e f1-score, aumentando falsos positivos.
+
+- SMOTE não trouxe ganhos visíveis.
+
+- Feature engineering ajudou pouco, mantendo resultados similares.
+
+- Dependendo do objetivo, pode-se escolher entre maior precisão (modelo base) ou maior recall (Equilibrio).
