@@ -7,17 +7,17 @@ from sklearn.ensemble import RandomForestClassifier
 from model import train_model, test_model
 from xgboost import XGBClassifier
 
-def logisticRegression(trainFile_path: str, testFile_path: str, classWeighbool: bool, use_smote: bool,use_feature_eng:bool):
+def logisticRegression(trainFile_path: str, testFile_path: str, classWeighbool: bool,use_feature_eng:bool):
     start_time = time.time()
 
     modelUsed = LogisticRegression(max_iter=1000, random_state=42)
-    model, scaler, columns = train_model(trainFile_path, modelUsed, classWeighbool, use_smote,use_feature_eng)
+    model, scaler, columns = train_model(trainFile_path, modelUsed, classWeighbool,use_feature_eng)
     test_model(testFile_path, model, scaler, columns,use_feature_eng)
 
     end_time = time.time()
     print(f"[LogisticRegression] Tempo de execução: {end_time - start_time:.2f} segundos")
 
-def randomForest(trainFile_path: str, testFile_path: str, classWeighbool: bool, use_smote: bool,use_feature_eng:bool):
+def randomForest(trainFile_path: str, testFile_path: str, classWeighbool: bool,use_feature_eng:bool):
         start_time = time.time()
 
         modelUsed = RandomForestClassifier(
@@ -25,7 +25,7 @@ def randomForest(trainFile_path: str, testFile_path: str, classWeighbool: bool, 
             random_state=42,
             class_weight='balanced' if classWeighbool else None
         )
-        model, scaler, columns = train_model(trainFile_path, modelUsed, classWeighbool, use_smote,use_feature_eng)
+        model, scaler, columns = train_model(trainFile_path, modelUsed, classWeighbool,use_feature_eng)
         test_model(testFile_path, model, scaler, columns,use_feature_eng)
 
         end_time = time.time()
@@ -33,7 +33,7 @@ def randomForest(trainFile_path: str, testFile_path: str, classWeighbool: bool, 
 
 
 
-def xgboost_model(trainFile_path: str, testFile_path: str, classWeighbool: bool, use_smote: bool, use_feature_eng: bool):
+def xgboost_model(trainFile_path: str, testFile_path: str, classWeighbool: bool, use_feature_eng: bool):
     start_time = time.time()
 
     modelUsed = XGBClassifier(
@@ -47,7 +47,7 @@ def xgboost_model(trainFile_path: str, testFile_path: str, classWeighbool: bool,
     )
 
     # Treina e testa o modelo
-    model, scaler, columns = train_model(trainFile_path, modelUsed, classWeighbool, use_smote, use_feature_eng)
+    model, scaler, columns = train_model(trainFile_path, modelUsed, classWeighbool, use_feature_eng)
     test_model(testFile_path, model, scaler, columns, use_feature_eng)
 
     end_time = time.time()
@@ -58,9 +58,8 @@ def main():
     testFile_path: str = '../data/test.csv'  
     trainFile_path: str = '../data/train.csv'  
 
-    xgboost_model(trainFile_path, testFile_path, False, False,False)
-    xgboost_model(trainFile_path, testFile_path, True, False,False)
-    xgboost_model(trainFile_path, testFile_path, False, True,False)
-    xgboost_model(trainFile_path, testFile_path, False, False,True)
+    randomForest(trainFile_path, testFile_path, False,False)
+    randomForest(trainFile_path, testFile_path, True,False)
+    randomForest(trainFile_path, testFile_path, False,True)
 if __name__ == '__main__':
     main()

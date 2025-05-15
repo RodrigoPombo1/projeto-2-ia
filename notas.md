@@ -32,11 +32,6 @@
     - Este método ajusta automaticamente o peso de cada classe com base na sua frequência inversa no conjunto de treino.
 
     - Ou seja, dá mais peso às classes minoritárias e menos peso às majoritárias, sem alterar os dados em si.
-- Smote:
-    -   Gera novos exemplos sintéticos da classe minoritária com base na interpolação entre vizinhos próximos no espaço de atributos.
-
-    -   Exemplo: se tens poucos exemplos com loan_status = 1, o SMOTE gera mais exemplos parecidos com esses, para equilibrar com a maioria (loan_status = 0).
-
 
 ## Feature engenering:
 - Criar novas variáveis que combinam informação relevante para ajudar o modelo a detetar padrões mais facilmente — especialmente padrões relacionados com capacidade financeira e risco.
@@ -62,17 +57,28 @@
 - LogisticRegression(max_iter=1000, random_state=42)
 - Resultados:
 ```
-exatidão : 0.911842441810896
-              precision    recall  f1-score   support
+Exatidão (validação): 0.911842441810896
 
-           0       0.93      0.97      0.95     10087
-           1       0.77      0.53      0.63      1642
+Classification report:
+               precision    recall  f1-score   support
 
-    accuracy                           0.91     11729
-   macro avg       0.85      0.75      0.79     11729
-weighted avg       0.90      0.91      0.90     11729
+           0       0.93      0.97      0.95     10087 
+           1       0.77      0.53      0.63      1642 
+
+    accuracy                           0.91     11729 
+   macro avg       0.85      0.75      0.79     11729 
+weighted avg       0.90      0.91      0.90     11729 
+
+Matriz de confusão:
+[[9832  255]
+ [ 779  863]]
+Tempo de treino: 0.0700 segundos
+Tempo de predição (validação): 0.0000 segundos
+Submission saved on 'submission.csv'
+Tempo para processar teste: 0.0810 segundos
+[LogisticRegression] Tempo de execução: 0.37 segundos
 ```
-- Tempo de execução: 0.41 segundos
+
 - Conclusao:
 - Bons resultados para um modelo tão simples porem existe um possivel fator problematico que é ataxa de recall para load aproval 1 que é de 0,53 significa que o modelo só identifica 53% dos clientes problemáticos.
 - Oque pode ser causado pelo um maior numero de 0 do que 1
@@ -83,8 +89,10 @@ weighted avg       0.90      0.91      0.90     11729
 
 - Resultados:
 ```
-exatidão : 0.8399693068462785
-              precision    recall  f1-score   support
+Exatidão (validação): 0.8397987893256033
+
+Classification report:
+               precision    recall  f1-score   support
 
            0       0.97      0.84      0.90     10087
            1       0.46      0.83      0.59      1642
@@ -92,29 +100,28 @@ exatidão : 0.8399693068462785
     accuracy                           0.84     11729
    macro avg       0.71      0.84      0.75     11729
 weighted avg       0.90      0.84      0.86     11729
+
+Matriz de confusão:
+[[8484 1603]
+ [ 276 1366]]
+Tempo de treino: 0.0780 segundos
+Tempo de predição (validação): 0.0000 segundos
+Submission saved on 'submission.csv'
+Tempo para processar teste: 0.0900 segundos
+[LogisticRegression] Tempo de execução: 0.39 segundos
+
 ```
 - Melhorou o recall porem pirou outras metricas talvez mais importantes como a precisao e o f1-score, levando um aumento do numero de falsos negativos
 - ISto aconteceu pois o modelo dá mais importância à classe minoritária (no teu caso, o loan_status = 1). 
 
-## Uso De smote:
-- Resultados:
-```
-exatidão : 0.8399693068462785
-              precision    recall  f1-score   support
 
-           0       0.97      0.84      0.90     10087
-           1       0.46      0.83      0.59      1642
-
-    accuracy                           0.84     11729
-   macro avg       0.71      0.84      0.75     11729
-weighted avg       0.90      0.84      0.86     11729
-```
--  O uso de smote tem um resultado identico do balance_classes
 
 ## Uso de Feature engenering
 ```
-exatidão (validação): 0.9149970159433882
-              precision    recall  f1-score   support
+Exatidão (validação): 0.9149970159433882
+
+Classification report:
+               precision    recall  f1-score   support
 
            0       0.93      0.97      0.95     10087
            1       0.78      0.55      0.64      1642
@@ -122,6 +129,15 @@ exatidão (validação): 0.9149970159433882
     accuracy                           0.91     11729
    macro avg       0.85      0.76      0.80     11729
 weighted avg       0.91      0.91      0.91     11729
+
+Matriz de confusão:
+[[9828  259]
+ [ 738  904]]
+Tempo de treino: 0.1280 segundos
+Tempo de predição (validação): 0.0010 segundos
+Submission saved on 'submission.csv'
+Tempo para processar teste: 0.0950 segundos
+[LogisticRegression] Tempo de execução: 0.48 segundos
 ```
 - O recall subiu de 0.53 → 0.55
 
@@ -130,7 +146,6 @@ weighted avg       0.91      0.91      0.91     11729
 - Isto significa que o modelo passou a identificar um pouco melhor quem não paga o empréstimo, sem perder qualidade nos outros caso
 
 ## Interpretação
--  SMOTE  está a funcionar: aumentou bastante o recall da classe minoritária (classe 1).
 
 - Class weights também estão a ajudar o modelo a tratar a classe 1 com mais importância.
 
@@ -141,8 +156,10 @@ weighted avg       0.91      0.91      0.91     11729
 - emodelUsed = RandomForestClassifier(n_estimators=100, random_state=42)
 - Resultados:
 ```
-exatidão  (validação): 0.951828800409242
-              precision    recall  f1-score   support
+Exatidão (validação): 0.9517435416489044
+
+Classification report:
+               precision    recall  f1-score   support
 
            0       0.96      0.99      0.97     10087
            1       0.92      0.72      0.81      1642
@@ -150,22 +167,30 @@ exatidão  (validação): 0.951828800409242
     accuracy                           0.95     11729
    macro avg       0.94      0.86      0.89     11729
 weighted avg       0.95      0.95      0.95     11729
-```
 
-- Tempo:5.31 segundos
+Matriz de confusão:
+[[9977  110]
+ [ 456 1186]]
+Tempo de treino: 4.2620 segundos
+Tempo de predição (validação): 0.1930 segundos
+Submission saved on 'submission.csv'
+Tempo para processar teste: 0.6830 segundos
+[RandomForest] Tempo de execução: 5.36 segundos
+```
 - ##Conclusao:
-- Random Forest sem SMOTE nem class_weight teve melhor desempenho em todos os aspetos em comparacao com o caso base logisticRegression .
 
 - Foi especialmente superior na classe minoritária, onde o modelo de regressão logística teve um desempenho mais fraco (recall 0.53 vs 0.72).
 
-- Não foi necessário Equilibrio explícito (nem SMOTE, nem class_weight) para a Random Forest ter um bom desempenho — isso é esperado, porque Random Forest lida melhor com desEquilibrio ao não ser um modelo linear e ao fazer bootstraping com vários subconjuntos dos dados.
+- Não foi necessário Equilibrio explícito ( class_weight) para a Random Forest ter um bom desempenho — isso é esperado, porque Random Forest lida melhor com desEquilibrio ao não ser um modelo linear e ao fazer bootstraping com vários subconjuntos dos dados.
 
 ## RandomForestClassifier com class_weight:
 
 - Resultados:
 ```
-exatidão  (validação): 0.9515730241282292
-              precision    recall  f1-score   support
+Exatidão (validação): 0.9514877653678916
+
+Classification report:
+               precision    recall  f1-score   support
 
            0       0.95      0.99      0.97     10087
            1       0.92      0.71      0.80      1642
@@ -174,19 +199,28 @@ exatidão  (validação): 0.9515730241282292
    macro avg       0.94      0.85      0.89     11729
 weighted avg       0.95      0.95      0.95     11729
 
+Matriz de confusão:
+[[9989   98]
+ [ 471 1171]]
+Tempo de treino: 4.3159 segundos
+Tempo de predição (validação): 0.1670 segundos
+Submission saved on 'submission.csv'
+Tempo para processar teste: 0.6889 segundos
+[RandomForest] Tempo de execução: 5.38 segundos
+
 ```
 
 - ## Conclusao:
 - Random Forest com class_weight não tem qualquer melhoria mas ja era esperado   porque Random Forest lida melhor com desEquilibrio ao não ser um modelo linear e ao fazer bootstraping com vários subconjuntos dos dados.
 
-## RandomForestClassifier com Smote:
-- Este teste não é necessario pois como nao é influenciado pelo class_weight o smote nao tera efeito
 
 ## RandomForestClassifier com Feature engineering:
 
 ```
-exatidão (validação): 0.9473100861113479
-              precision    recall  f1-score   support
+Exatidão (validação): 0.9470543098303351
+
+Classification report:
+               precision    recall  f1-score   support
 
            0       0.95      0.99      0.97     10087
            1       0.89      0.71      0.79      1642
@@ -195,10 +229,17 @@ exatidão (validação): 0.9473100861113479
    macro avg       0.92      0.85      0.88     11729
 weighted avg       0.95      0.95      0.94     11729
 
+Matriz de confusão:
+[[9950  137]
+ [ 484 1158]]
+Tempo de treino: 8.4121 segundos
+Tempo de predição (validação): 0.1850 segundos
+Submission saved on 'submission.csv'
+Tempo para processar teste: 0.7240 segundos
+[RandomForest] Tempo de execução: 9.57 segundos
+
 ```
 - Estas features podema acrescentar alguma redundancia desbalancear a árvore ao fazer splits em features artificiais menos relevantes
-
-
 
 
 ## XGBoost:
@@ -214,8 +255,10 @@ weighted avg       0.95      0.95      0.94     11729
     )
 - Resultados:
 ```
-exatidão (validação): 0.9534487168556569
-              precision    recall  f1-score   support
+Exatidão (validação): 0.9534487168556569
+
+Classification report:
+               precision    recall  f1-score   support
 
            0       0.96      0.99      0.97     10087
            1       0.92      0.74      0.82      1642
@@ -224,16 +267,26 @@ exatidão (validação): 0.9534487168556569
    macro avg       0.94      0.86      0.89     11729
 weighted avg       0.95      0.95      0.95     11729
 
+Matriz de confusão:
+[[9975  112]
+ [ 434 1208]]
+Tempo de treino: 0.4500 segundos
+Tempo de predição (validação): 0.0080 segundos
+Submission saved on 'submission.csv'
+Tempo para processar teste: 0.1390 segundos
+[XGBoost] Tempo de execução: 0.87 segundos
+
 ```
-- Tempo de execução: 1.12 segundos- Conclusao:
 
 
 ## Treino com balance_classes:
 
 - Resultados:
 ```
-exatidão (validação): 0.9252280671839032
-              precision    recall  f1-score   support
+Exatidão (validação): 0.9252280671839032
+
+Classification report:
+               precision    recall  f1-score   support
 
            0       0.97      0.94      0.96     10087
            1       0.70      0.83      0.76      1642
@@ -241,37 +294,42 @@ exatidão (validação): 0.9252280671839032
     accuracy                           0.93     11729
    macro avg       0.83      0.89      0.86     11729
 weighted avg       0.93      0.93      0.93     11729
+
+Matriz de confusão:
+[[9489  598]
+ [ 279 1363]]
+Tempo de treino: 0.3060 segundos
+Tempo de predição (validação): 0.0070 segundos
+Submission saved on 'submission.csv'
+Tempo para processar teste: 0.1350 segundos
+[XGBoost] Tempo de execução: 0.73 segundos
 ```
 - Melhorou o recall porem pirou outras metricas talvez mais importantes como a precisao e o f1-score, levando um aumento do numero de falsos negativos
 - ISto aconteceu pois o modelo dá mais importância à classe minoritária (no teu caso, o loan_status = 1). 
 
-## Uso De smote:
-- Resultados:
-```
-eexatidão (validação): 0.9534487168556569
-              precision    recall  f1-score   support
-
-           0       0.96      0.99      0.97     10087
-           1       0.92      0.74      0.82      1642
-
-    accuracy                           0.95     11729
-   macro avg       0.94      0.86      0.89     11729
-weighted avg       0.95      0.95      0.95     11729
-```
--  O uso de smote tem um resultado identico do balance_classes
 
 ## Uso de Feature engenering
 ```
-  bst.update(dtrain, iteration=i, fobj=obj)
-exatidão (validação): 0.9512319890868787
-              precision    recall  f1-score   support
+Exatidão (validação): 0.9499531076818143
+
+Classification report:
+               precision    recall  f1-score   support
 
            0       0.96      0.99      0.97     10087
-           1       0.91      0.73      0.81      1642
+           1       0.90      0.72      0.80      1642
 
     accuracy                           0.95     11729
    macro avg       0.93      0.86      0.89     11729
 weighted avg       0.95      0.95      0.95     11729
+
+Matriz de confusão:
+[[9953  134]
+ [ 453 1189]]
+Tempo de treino: 0.3670 segundos
+Tempo de predição (validação): 0.0080 segundos
+Submission saved on 'submission.csv'
+Tempo para processar teste: 0.1570 segundos
+[XGBoost] Tempo de execução: 0.83 segundos
 ```
 
 
@@ -280,7 +338,6 @@ weighted avg       0.95      0.95      0.95     11729
 
 - Equilibrio melhora o recall da classe minoritária, mas prejudica precisão e f1-score, aumentando falsos positivos.
 
-- SMOTE não trouxe ganhos visíveis.
 
 - Feature engineering ajudou pouco, mantendo resultados similares.
 

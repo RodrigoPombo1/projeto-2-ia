@@ -3,7 +3,6 @@ from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import StandardScaler
 from sklearn.utils.class_weight import compute_class_weight
 import numpy as np
-from imblearn.over_sampling import SMOTE
 
 def feature_engineering(df):
     median_emp_length = df['person_emp_length'].replace(0, np.nan).median()
@@ -22,14 +21,13 @@ def feature_engineering(df):
 
 
 
-def preprocess_train(file_path: str, balance_classes: bool = False, use_smote: bool = False, use_feature_eng: bool = False):
+def preprocess_train(file_path: str, balance_classes: bool = False, use_feature_eng: bool = False):
     df = pd.read_csv(file_path)
     df = df.drop(columns=['id'])
 
     if use_feature_eng:
         df = feature_engineering(df)
 
-    # One-hot encoding 
     df = pd.get_dummies(df, columns=[
         'person_home_ownership',
         'loan_intent',
@@ -38,32 +36,36 @@ def preprocess_train(file_path: str, balance_classes: bool = False, use_smote: b
     ], drop_first=True)
 
     df = df.dropna()
-    X = df.drop(columns=['loan_status'])  
+
+    X = df.drop(columns=['loan_status'])
     y = df['loan_status']
 
-    scaler = StandardScaler()
-    X_scaled = scaler.fit_transform(X)
-
-    # Divide em treino/teste 
+    # Divide treino/validação antes de qualquer escala ou balanceamento
     X_train, X_val, y_train, y_val = train_test_split(
-        X_scaled, y, test_size=0.2, random_state=42
+        X, y, test_size=0.2, random_state=42
     )
 
-    if balance_classes:
-        if use_smote:
-            smote = SMOTE(random_state=42)
-            X_train, y_train = smote.fit_resample(X_train, y_train)
-            class_weights_dict = None
-        else:
-            class_weights = compute_class_weight(
-                class_weight='balanced',
-                classes=np.unique(y_train),
-                y=y_train
-            )
-            class_weights_dict = dict(zip(np.unique(y_train), class_weights))
-        return X_train, X_val, y_train, y_val, scaler, X.columns, class_weights_dict
+    class_weights_dict = None  # Default
 
-    return X_train, X_val, y_train, y_val, scaler, X.columns
+    if balance_classes:
+       
+       
+        class_weights = compute_class_weight(
+            class_weight='balanced',
+            classes=np.unique(y_train),
+            y=y_train
+        )
+        class_weights_dict = dict(zip(np.unique(y_train), class_weights))
+
+    # Agora escala os dados (separadamente treino e validação!)
+    scaler = StandardScaler()
+    X_train_scaled = scaler.fit_transform(X_train)
+    X_val_scaled = scaler.transform(X_val)
+
+    if balance_classes:
+        return X_train_scaled, X_val_scaled, y_train, y_val, scaler, X.columns, class_weights_dict
+    else:
+        return X_train_scaled, X_val_scaled, y_train, y_val, scaler, X.columns
 
 
 def preprocess_test(file_path: str, scaler, columns, use_feature_eng: bool = False):
