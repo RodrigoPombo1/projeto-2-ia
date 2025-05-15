@@ -18,7 +18,8 @@ def preprocess_train(file_path: str, balance_classes: bool = False, use_smote: b
     ], drop_first=True)
 
     df = df.dropna()
-
+    # TODO loan_int_rate afeta nos resultados?
+    #X = df.drop(columns=['loan_status', 'loan_int_rate'])  
     X = df.drop(columns=['loan_status'])  
     y = df['loan_status']
 
