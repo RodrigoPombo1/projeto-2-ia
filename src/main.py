@@ -1,8 +1,15 @@
-from parser import parse_csv
+from logisticRegressionModel import logisticRegressionTrain,logisticRegressionTest
 
 def main():
-    file_path = '../data/test.csv'  
-    parse_csv(file_path)
+    testFile_path:str = '../data/test.csv'  
+    trainFile_path:str = '../data/train.csv'  
+    model, scaler, columns = logisticRegressionTrain(trainFile_path, classWeighbool=False, use_smote=False)
+    logisticRegressionTest(trainFile_path,model,scaler,columns)
+
+
+    """ logisticRegressionTrain(trainFile_path, classWeighbool=True, use_smote=True)
+    logisticRegressionTrain(trainFile_path, classWeighbool=True, use_smote=False) """
+
 
 if __name__ == '__main__':
     main()
