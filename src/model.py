@@ -10,8 +10,8 @@ from sklearn.metrics import accuracy_score, classification_report, confusion_mat
 from collections import Counter
 from xgboost import XGBClassifier
 
-def train_model(trainFile_path: str, model, classWeighbool: bool = False, use_feature_eng: bool = False):
-    if classWeighbool:
+def train_model(trainFile_path: str, model, classWeightbool: bool = False, use_feature_eng: bool = False):
+    if classWeightbool:
         # preprocess_train retorna class_weights quando balance_classes=True
         X_train, X_val, y_train, y_val, scaler, columns, class_weights = preprocess_train(
             trainFile_path, balance_classes=True, use_feature_eng=use_feature_eng

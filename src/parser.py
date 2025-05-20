@@ -48,8 +48,6 @@ def preprocess_train(file_path: str, balance_classes: bool = False, use_feature_
     class_weights_dict = None  # Default
 
     if balance_classes:
-       
-       
         class_weights = compute_class_weight(
             class_weight='balanced',
             classes=np.unique(y_train),

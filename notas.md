@@ -2,7 +2,7 @@
 
 ## Parser:
 ### preprocess_train
-- Inicialmente removemos variavies nao importante como Id
+- Inicialmente removemos variavies nao importantes como Id
 
 - Transformação de variáveis categóricas em variáveis binárias (dummies)
 - Como temos drop_first=True ou seja vamos ter mais N(numero de atributos)-1 de colunas 
