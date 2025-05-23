@@ -342,3 +342,60 @@ Tempo para processar teste: 0.1570 segundos
 - Feature engineering ajudou pouco, mantendo resultados similares.
 
 - Dependendo do objetivo, pode-se escolher entre maior precisão (modelo base) ou maior recall (Equilibrio).
+
+
+
+
+
+# Análise Resumida: Impacto de `class_weight='balanced'`
+
+## Contexto
+O parâmetro `class_weight='balanced'` foi testado para lidar com o desequilibrio entre as classes. No entanto, os resultados mostram que nem sempre há ganhos de desempenho, podendo mesmo haver degradação.
+
+---
+
+## Logistic Regression
+
+- **Sem `class_weight`**:
+  - Exatidão: 91.18%
+  - Classe 1 (minoritária): precisão 0.77, recall 0.53, f1-score 0.63
+
+- **Com `class_weight`**:
+  - Exatidão: 83.98%
+  - Classe 1: precisão 0.46, recall 0.83, f1-score 0.59
+
+**Resumo:** Ganhou-se muito em recall, mas perdeu-se demasiada precisão, o que penalizou a Exatidão geral.
+
+---
+
+## Random Forest
+
+- Diferença mínima entre os dois cenários.
+- Exatidão praticamente igual (95.17% vs 95.14%)
+- Pequena troca entre precisão e recall da classe 1.
+
+**Resumo:** `class_weight` teve pouco impacto. O modelo já lida bem com desbalanceamento.
+
+---
+
+## XGBoost
+
+- **Sem `class_weight`**:
+  - Exatidão: 95.34%
+  - Classe 1: precisão 0.91, recall 0.74
+
+- **Com `scale_pos_weight`**:
+  - Exatidão: 92.63%
+  - Classe 1: precisão 0.70, recall 0.83
+
+**Resumo:** Aumento do recall à custa de muita precisão, o que degradou o desempenho geral.
+
+---
+
+## Conclusão
+
+- `class_weight` melhora o **recall** da classe minoritária, mas pode degradar **precisão** e **Exatidão total**.
+- Em modelos como Random Forest e XGBoost, pode não ser necessário aplicar `class_weight`, pois estes já lidam bem com desbalanceamento.
+- Usar `class_weight` faz mais sentido quando o objetivo é maximizar recall, mesmo com perda de precisão.
+- Maximizar o recall é importante quando o mais valioso é detetar todos os casos positivos, mesmo que isso implique cometer mais erros ao marcar negativos como positivos (ou seja, ter mais falsos positivos).
+- Desta forma o class weight apesar de piorar a precisao pode ser util em casos em que pretendemos maximizar o recall

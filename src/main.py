@@ -58,8 +58,6 @@ def main():
     testFile_path: str = '../data/test.csv'  
     trainFile_path: str = '../data/train.csv'  
 
-    randomForest(trainFile_path, testFile_path, False,False)
-    randomForest(trainFile_path, testFile_path, True,False)
-    randomForest(trainFile_path, testFile_path, False,True)
+    xgboost_model(trainFile_path, testFile_path, False,False)
 if __name__ == '__main__':
     main()
