@@ -2,3 +2,5 @@
 .vscode
 /venv
 submission.csv
+./__pycache__
+./submission.csv
